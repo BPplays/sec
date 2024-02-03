@@ -137,6 +137,6 @@ func main() {
 
 
 
-	fmt.Println(fmt_epoch_to_prefixsec(epochTime, common_prefixes, "milli"))
+	fmt.Println(fmt_epoch_to_prefixsec(utime, common_prefixes, "milli"))
 
 }
