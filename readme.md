@@ -13,7 +13,7 @@ gives time in seconds with prefixes
 ```
 =============================
 ```
-->sec
+-> sec
 1Gs 706Ms 935ks 999s
 -> sec
 1Gs 706Ms 936ks 2s
