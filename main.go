@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"sort"
 	"strings"
 	"time"
 )
@@ -74,7 +75,20 @@ func fmt_epoch_to_prefixsec(time int64, prefixes map[string]Prefix, break_prefix
 	var output strings.Builder
 	fl_time := float64(time)
 
-	for key, value := range prefixes {
+
+	keys := make([]string, 0, len(AllPrefixes))
+	for key := range AllPrefixes {
+		keys = append(keys, key)
+	}
+
+	// Sort the keys in descending order
+	sort.Slice(keys, func(i, j int) bool {
+		return AllPrefixes[keys[i]].Base10 > AllPrefixes[keys[j]].Base10
+	})
+
+	// Iterate over the sorted keys
+	for _, key := range keys {
+		value := AllPrefixes[key]
 		if key == break_prefix {
 			break
 		} else {
