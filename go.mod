@@ -1,4 +1,4 @@
-module github.com/BPplays/get_time_sec
+module github.com/BPplays/sec
 
 go 1.21.5
 
