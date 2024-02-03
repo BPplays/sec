@@ -94,8 +94,6 @@ func fmt_epoch_to_prefixsec(utime int64, prefixes map[string]Prefix, break_prefi
 		value := prefixes[key]
 		if key == break_prefix {
 			break
-		} else {
-			output.WriteString(" ")
 		}
 
 
@@ -106,11 +104,23 @@ func fmt_epoch_to_prefixsec(utime int64, prefixes map[string]Prefix, break_prefi
 			fl_round_time = math.Floor(fl_time / value.Base10)
 			output.WriteString(fmt.Sprintf("%v%v",fl_round_time, value.Symbol+"s"))
 			fl_time = fl_time - (fl_round_time * value.Base10)
+			output.WriteString(" ")
 		}
 
 	}
 
-	return output.String()
+	return removeSingleTrailingSpace(output.String())
+}
+
+
+func removeSingleTrailingSpace(input string) string {
+	// Check if the input string has a single trailing space
+	if strings.HasSuffix(input, " ") {
+		// If yes, remove the last character
+		return input[:len(input)-1]
+	}
+	// If no trailing space, return the input string as is
+	return input
 }
 
 
