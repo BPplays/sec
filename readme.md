@@ -1,11 +1,21 @@
 gives time in seconds with prefixes
 
+
+=============================
 ```
--> get_time_sec
+-> sec
 1Gs 706Ms 935ks 749s
 ```
 
 ```
--> get_time_sec 1700000000
+-> sec 1700000000
 1Gs 700Ms
+```
+
+
+```
+->sec
+1Gs 706Ms 935ks 999s
+-> sec
+1Gs 706Ms 936ks 2s
 ```
