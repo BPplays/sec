@@ -81,9 +81,11 @@ func fmt_epoch_to_prefixsec(time int64, prefixes map[string]Prefix, break_prefix
 			output.WriteString(" ")
 		}
 
-		if fl_time / value.Base10 >=1 {
-			output.WriteString(fmt.Sprintf("%v %v",fl_time / value.Base10, value.Symbol+"s"))
-		}
+		output.WriteString(value.FullName)
+
+		// if fl_time / value.Base10 >= 1 {
+		// 	output.WriteString(fmt.Sprintf("%v %v",fl_time / value.Base10, value.Symbol+"s"))
+		// }
 
 	}
 
