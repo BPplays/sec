@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"math"
+	"os"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -71,9 +73,9 @@ var common_prefixes = map[string]Prefix{
 
 
 
-func fmt_epoch_to_prefixsec(time int64, prefixes map[string]Prefix, break_prefix string) string {
+func fmt_epoch_to_prefixsec(utime int64, prefixes map[string]Prefix, break_prefix string) string {
 	var output strings.Builder
-	fl_time := float64(time)
+	fl_time := float64(utime)
 	var fl_round_time float64
 
 
@@ -113,11 +115,28 @@ func fmt_epoch_to_prefixsec(time int64, prefixes map[string]Prefix, break_prefix
 
 
 func main() {
+
+	var utime int64
+
 	// Get the current time in UTC
 	currentTime := time.Now().UTC()
 
 	// Get the Unix epoch time in seconds
 	epochTime := currentTime.Unix()
 
+	if len(os.Args) > 1 {
+		num, err := strconv.ParseInt(os.Args[1], 10, 64)
+		if err != nil {
+			utime = epochTime
+		} else {
+			utime = num
+		}
+    } else {
+		utime = epochTime
+    }
+
+
+
 	fmt.Println(fmt_epoch_to_prefixsec(epochTime, common_prefixes, "milli"))
+
 }
