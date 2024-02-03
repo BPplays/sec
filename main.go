@@ -76,19 +76,19 @@ func fmt_epoch_to_prefixsec(time int64, prefixes map[string]Prefix, break_prefix
 	fl_time := float64(time)
 
 
-	keys := make([]string, 0, len(AllPrefixes))
-	for key := range AllPrefixes {
+	keys := make([]string, 0, len(prefixes))
+	for key := range prefixes {
 		keys = append(keys, key)
 	}
 
 	// Sort the keys in descending order
 	sort.Slice(keys, func(i, j int) bool {
-		return AllPrefixes[keys[i]].Base10 > AllPrefixes[keys[j]].Base10
+		return prefixes[keys[i]].Base10 > prefixes[keys[j]].Base10
 	})
 
 	// Iterate over the sorted keys
 	for _, key := range keys {
-		value := AllPrefixes[key]
+		value := prefixes[key]
 		if key == break_prefix {
 			break
 		} else {
