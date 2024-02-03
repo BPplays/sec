@@ -77,6 +77,8 @@ func fmt_epoch_to_prefixsec(time int64, prefixes map[string]Prefix, break_prefix
 	for key, value := range prefixes {
 		if key == break_prefix {
 			break
+		} else {
+			output.WriteString(" ")
 		}
 
 		if fl_time / value.Base10 >=1 {
