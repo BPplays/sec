@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math"
 	"os"
 	"sort"
@@ -134,7 +135,8 @@ func main() {
 	if len(os.Args) > 1 {
 		num, err := strconv.ParseInt(os.Args[1], 10, 64)
 		if err != nil {
-			utime = epochTime
+			// utime = epochTime
+			log.Fatal("error can't parse number")
 		} else {
 			utime = num
 		}
