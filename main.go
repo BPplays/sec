@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 
 	// "github.com/BPplays/dateparse"
 	"github.com/araddon/dateparse"
@@ -143,9 +144,9 @@ func findAndParseNumber(input string) (int64, error) {
 	// Find the first match
 	match := re.FindStringSubmatch(input)
 
-	if len(match) < 2 {
-		return 0, fmt.Errorf("No numbers found in the input string")
-	}
+	// if len(match) < 2 {
+	// 	return 0, fmt.Errorf("No numbers found in the input string")
+	// }
 
 	// Parse the matched numbers as int64
 	number, err := strconv.ParseInt(match[1], 10, 64)
@@ -176,7 +177,7 @@ func parse_prefix_sec(input string) int64 {
 
 		rune_list = []rune(i)
 		prefix := rune_list[len(rune_list)-2]
-		if prefix == ' ' {
+		if prefix == ' ' || unicode.IsDigit(prefix) {
 			total += num
 		}
 
