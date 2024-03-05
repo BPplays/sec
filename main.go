@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -133,7 +135,70 @@ func removeSingleTrailingSpace(input string) string {
 	return input
 }
 
-const customLayout = "2006/01/02 15:04:05"
+
+func findAndParseNumber(input string) (int64, error) {
+	// Define a regular expression to match the first group of numbers
+	re := regexp.MustCompile(`(\d+)`)
+
+	// Find the first match
+	match := re.FindStringSubmatch(input)
+
+	if len(match) < 2 {
+		return 0, fmt.Errorf("No numbers found in the input string")
+	}
+
+	// Parse the matched numbers as int64
+	number, err := strconv.ParseInt(match[1], 10, 64)
+	if err != nil {
+		return 0, err
+	}
+
+	return number, nil
+}
+
+
+func parse_prefix_sec(input string) int64 {
+	var total int64 = 0
+
+	split := strings.SplitAfter(input, "s")
+
+
+
+
+
+	var rune_list []rune
+
+	for _, i := range split {
+		num, err := findAndParseNumber(i)
+		if err != nil {
+			continue
+		}
+
+		rune_list = []rune(i)
+		prefix := rune_list[len(rune_list)-2]
+		if prefix == ' ' {
+			total += num
+		}
+
+		for _, value := range AllPrefixes {
+			// Check if the Symbol matches the symbolToFind
+			if value.Symbol == string(prefix) {
+				// Symbol found, do something
+				// fmt.Printf("Symbol %s found for prefix %s\n", prefix, key)
+				total += num * int64(value.Base10)
+			}
+		}
+	}
+
+	return total
+
+}
+
+
+
+
+
+
 
 
 func main() {
@@ -149,13 +214,18 @@ func main() {
 
 	var date string
 
+	var prefix_second string
+
 	var date_out bool
 
 
 	var break_prefix string = "milli"
 
 	// Set up the command line flags
-	pflag.Int64P("utime", "i", 0, "Specify the utime value")
+	pflag.Int64P("int_second", "i", 0, "int_second input")
+	pflag.StringVarP(&prefix_second, "prefix_second", "p", "", "prefix_second input")
+
+
 	pflag.BoolVarP(&millisecflag, "milli", "m", false, "milliseconds")
 	pflag.BoolVarP(&microsecflag, "micro", "6", false, "microseconds (6 is for 10^-6 what micro stands for)")
 	pflag.BoolVarP(&nanosecflag, "nano", "n", false, "nanoseconds")
@@ -173,8 +243,8 @@ func main() {
 	viper.BindPFlags(pflag.CommandLine)
 
 	// Get the utime value from the configuration
-	if viper.IsSet("utime") {
-		utimeValue := viper.GetInt64("utime")
+	if viper.IsSet("int_second") {
+		utimeValue := viper.GetInt64("int_second")
 		utime = &utimeValue
 	} else {
 		utime = nil
@@ -197,6 +267,13 @@ func main() {
 	var mul *float64
 
 	mul = &mul_val
+
+	if viper.IsSet("prefix_second") {
+		utimeValue := viper.GetInt64("prefix_second")
+		utime = &utimeValue
+	} else {
+		utime = nil
+	}
 
 
 
@@ -257,7 +334,6 @@ func main() {
 		}
 
 		fmt.Printf("local: %v\nUTC: %v\n",date_out.Format(format) ,date_out.UTC().Format(format))
-		
 	} else {
 		fmt.Println(fmt_epoch_to_prefixsec((*utime), common_prefixes, break_prefix, mul))
 	}
