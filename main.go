@@ -148,7 +148,7 @@ func main() {
 	epochTime := currentTime.Unix()
 
 	if utime == nil {
-		fmt.Println("utime is not assigned. Using default value.")
+		// fmt.Println("utime is not assigned. Using default value.")
 		utime = &epochTime
 	}
 
