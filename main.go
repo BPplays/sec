@@ -139,6 +139,8 @@ func main() {
 	var microsecflag bool
 	var nanosecflag bool
 
+	var baresecflag bool
+
 
 	var break_prefix string = "milli"
 
@@ -147,6 +149,10 @@ func main() {
 	pflag.BoolVarP(&millisecflag, "milli", "m", false, "milliseconds")
 	pflag.BoolVarP(&microsecflag, "micro", "6", false, "microseconds (6 is for 10^-6 what micro stands for)")
 	pflag.BoolVarP(&nanosecflag, "nano", "n", false, "nanoseconds")
+
+	pflag.BoolVarP(&nanosecflag, "bare", "b", false, "bareseconds format")
+
+
 	pflag.Parse()
 
 	// Bind the viper configuration to the command line flags
@@ -163,6 +169,8 @@ func main() {
 	millisec := viper.GetBool("milli")
 	microsec := viper.GetBool("micro")
 	nanosec := viper.GetBool("nano")
+
+	baresec := viper.GetBool("bare")
 
 	// Get the current time in UTC
 	currentTime := time.Now().UTC()
@@ -201,7 +209,10 @@ func main() {
 	}
 
 
-
-	fmt.Println(fmt_epoch_to_prefixsec((*utime), common_prefixes, break_prefix, mul))
+	if baresec{
+		fmt.Println((*utime))
+	} else {
+		fmt.Println(fmt_epoch_to_prefixsec((*utime), common_prefixes, break_prefix, mul))
+	}
 
 }
