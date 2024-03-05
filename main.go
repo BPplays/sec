@@ -144,9 +144,9 @@ func main() {
 
 	// Set up the command line flags
 	pflag.Int64P("utime", "i", 0, "Specify the utime value")
-	pflag.BoolVarP(&millisecflag, "m", "m", false, "milli")
-	pflag.BoolVarP(&microsecflag, "micro", "6", false, "micro")
-	pflag.BoolVarP(&nanosecflag, "n", "n", false, "nano")
+	pflag.BoolVarP(&millisecflag, "milli", "m", false, "milliseconds")
+	pflag.BoolVarP(&microsecflag, "micro", "6", false, "microseconds (6 is for 10^-6 what micro stands for)")
+	pflag.BoolVarP(&nanosecflag, "nano", "n", false, "nanoseconds")
 	pflag.Parse()
 
 	// Bind the viper configuration to the command line flags
@@ -160,9 +160,9 @@ func main() {
 		utime = nil
 	}
 
-	millisec := viper.GetBool("m")
+	millisec := viper.GetBool("milli")
 	microsec := viper.GetBool("micro")
-	nanosec := viper.GetBool("n")
+	nanosec := viper.GetBool("nano")
 
 	// Get the current time in UTC
 	currentTime := time.Now().UTC()
