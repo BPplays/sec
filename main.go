@@ -138,7 +138,7 @@ func removeSingleTrailingSpace(input string) string {
 
 func findAndParseNumber(input string) (int64, error) {
 	var sb strings.Builder
-	fmt.Println(input)
+	// fmt.Println(input)
 	// runel := []rune(input)
 
 	for _, i := range input {
@@ -156,7 +156,7 @@ func findAndParseNumber(input string) (int64, error) {
 func parse_prefix_sec(input string) int64 {
 	var total int64 = 0
 
-	split := strings.SplitAfter(input, "s")
+	split := strings.SplitAfter(strings.ReplaceAll(input, " ", ""), "s")
 
 	fmt.Println(split)
 
@@ -169,7 +169,7 @@ func parse_prefix_sec(input string) int64 {
 	for _, i := range split {
 		num, err := findAndParseNumber(i)
 		if err != nil {
-			log.Println(err)
+			// log.Println(err)
 			continue
 		}
 
