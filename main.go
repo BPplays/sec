@@ -125,13 +125,13 @@ func removeSingleTrailingSpace(input string) string {
 func main() {
 
 	var utime *int64
-	var millisec bool
+	var millisecflag bool
 
 	var break_prefix string = "milli"
 
 	// Set up the command line flags
 	pflag.Int64P("utime", "i", 0, "Specify the utime value")
-	pflag.BoolVarP(&millisec, "m", "m", false, "Specify a boolean value")
+	pflag.BoolVarP(&millisecflag, "m", "m", false, "milli")
 	pflag.Parse()
 
 	// Bind the viper configuration to the command line flags
