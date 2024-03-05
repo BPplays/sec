@@ -145,7 +145,7 @@ func main() {
 	// Set up the command line flags
 	pflag.Int64P("utime", "i", 0, "Specify the utime value")
 	pflag.BoolVarP(&millisecflag, "m", "m", false, "milli")
-	pflag.BoolVar(&microsecflag, "micro", false, "micro")
+	pflag.BoolVarP(&microsecflag, "micro", "6", false, "micro")
 	pflag.BoolVarP(&nanosecflag, "n", "n", false, "nano")
 	pflag.Parse()
 
