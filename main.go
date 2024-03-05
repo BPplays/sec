@@ -157,6 +157,8 @@ func parse_prefix_sec(input string) int64 {
 
 	split := strings.SplitAfter(input, "s")
 
+	fmt.Println(split)
+
 
 
 
