@@ -240,18 +240,23 @@ func main() {
 	} else if date_out {
 		var date_out time.Time
 
+		var format string
+
 		if millisec {
 			date_out = time.UnixMilli((*utime))
+			format = "2006-01-02 15:04:05.000"
 		} else if microsec {
+			log.Fatal("error cant use microsec and date output")
 			date_out = time.UnixMicro((*utime))
 		} else if nanosec {
 			log.Fatal("error cant use nanosec and date output")
 			// date_out = time.UnixNano(utime)
 		} else {
 			date_out = time.Unix((*utime), 0)
+			format = "2006-01-02 15:04:05"
 		}
 
-		fmt.Printf("local: %v\nUTC: %v\n",date_out.Format("2006-01-02 15:04:05") ,date_out.UTC().Format("2006-01-02 15:04:05"))
+		fmt.Printf("local: %v\nUTC: %v\n",date_out.Format(format) ,date_out.UTC().Format(format))
 		
 	} else {
 		fmt.Println(fmt_epoch_to_prefixsec((*utime), common_prefixes, break_prefix, mul))
