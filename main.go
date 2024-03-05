@@ -269,10 +269,9 @@ func main() {
 	mul = &mul_val
 
 	if viper.IsSet("prefix_second") {
-		utimeValue := viper.GetInt64("prefix_second")
-		utime = &utimeValue
-	} else {
-		utime = nil
+		utimeValue := viper.GetString("prefix_second")
+		utimeValue_parse := parse_prefix_sec(utimeValue)
+		utime = &utimeValue_parse
 	}
 
 
