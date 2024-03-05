@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math"
 	"sort"
 	"strings"
@@ -148,6 +149,8 @@ func main() {
 
 	var date string
 
+	var date_out bool
+
 
 	var break_prefix string = "milli"
 
@@ -160,6 +163,8 @@ func main() {
 	pflag.BoolVarP(&baresecflag, "bare", "b", false, "bareseconds format")
 
 	pflag.StringVarP(&date, "date", "d", "", "date format")
+
+	pflag.BoolVarP(&date_out, "date_out", "o", false, "date output")
 
 
 	pflag.Parse()
@@ -232,6 +237,20 @@ func main() {
 		}
 		fmt.Println(parsed_date)
 		fmt.Println(parsed_date.Unix())
+	} else if date_out {
+		var date_out time.Time
+
+		if millisec {
+			date_out = time.UnixMilli((*utime))
+		} else if microsec {
+			date_out = time.UnixMicro((*utime))
+		} else if nanosec {
+			log.Fatal("error cant use nanosec and date output")
+			// date_out = time.UnixNano(utime)
+		} else {
+			date_out = time.Unix((*utime), 0)
+		}
+		
 	} else {
 		fmt.Println(fmt_epoch_to_prefixsec((*utime), common_prefixes, break_prefix, mul))
 	}
