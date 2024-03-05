@@ -168,6 +168,7 @@ func parse_prefix_sec(input string) int64 {
 	for _, i := range split {
 		num, err := findAndParseNumber(i)
 		if err != nil {
+			log.Println(err)
 			continue
 		}
 
