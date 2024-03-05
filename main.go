@@ -138,6 +138,7 @@ func removeSingleTrailingSpace(input string) string {
 
 func findAndParseNumber(input string) (int64, error) {
 	var sb strings.Builder
+	fmt.Println(input)
 	// runel := []rune(input)
 
 	for _, i := range input {
