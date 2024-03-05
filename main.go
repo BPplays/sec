@@ -250,6 +250,8 @@ func main() {
 		} else {
 			date_out = time.Unix((*utime), 0)
 		}
+
+		fmt.Println(date_out.Format("2006-01-02 15:04:05"))
 		
 	} else {
 		fmt.Println(fmt_epoch_to_prefixsec((*utime), common_prefixes, break_prefix, mul))
