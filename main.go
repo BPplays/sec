@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/araddon/dateparse"
+	"github.com/BPplays/dateparse"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )

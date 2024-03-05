@@ -3,6 +3,7 @@ module github.com/BPplays/sec
 go 1.21.5
 
 require (
+	github.com/BPplays/dateparse v0.0.0-20240305155628-06372df36ad9 // indirect
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect

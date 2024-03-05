@@ -1,3 +1,5 @@
+github.com/BPplays/dateparse v0.0.0-20240305155628-06372df36ad9 h1:x3VAj8eYXN/0nWM9N10YWCHcELUJ4Q1IUm318zsQmJ8=
+github.com/BPplays/dateparse v0.0.0-20240305155628-06372df36ad9/go.mod h1:KBslsvnytCayWXz2MG5lMjdvr0ROUS1J166OQ6atx5s=
 github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de h1:FxWPpzIjnTlhPwqqXc4/vE0f7GvRjuAsbW+HOIe8KnA=
 github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de/go.mod h1:DCaWoUhZrYW9p1lxo/cm8EmUOOzAPSEZNGF2DK1dJgw=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
