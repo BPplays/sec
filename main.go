@@ -131,7 +131,7 @@ func main() {
 
 	// Set up the command line flags
 	pflag.Int64P("utime", "i", 0, "Specify the utime value")
-	pflag.BoolVarP(&millisecflag, "m", "m", false, "milli")
+	pflag.BoolVarP(&millisecflag, "m", "m", false, "micro")
 	pflag.Parse()
 
 	// Bind the viper configuration to the command line flags
