@@ -150,7 +150,7 @@ func main() {
 	pflag.BoolVarP(&microsecflag, "micro", "6", false, "microseconds (6 is for 10^-6 what micro stands for)")
 	pflag.BoolVarP(&nanosecflag, "nano", "n", false, "nanoseconds")
 
-	pflag.BoolVarP(&nanosecflag, "bare", "b", false, "bareseconds format")
+	pflag.BoolVarP(&baresecflag, "bare", "b", false, "bareseconds format")
 
 
 	pflag.Parse()
