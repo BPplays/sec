@@ -220,7 +220,12 @@ func main() {
 	if baresec{
 		fmt.Println((*utime))
 	} else if date != "" {
-		time.Parse(customLayout, date)
+		date, err := time.Parse(customLayout, date)
+		if err != nil {
+			fmt.Println("err:", err)
+		}
+		fmt.Println(date)
+		fmt.Println(date.Unix())
 	} else {
 		fmt.Println(fmt_epoch_to_prefixsec((*utime), common_prefixes, break_prefix, mul))
 	}
