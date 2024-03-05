@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"math"
-	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -138,23 +137,18 @@ func removeSingleTrailingSpace(input string) string {
 
 
 func findAndParseNumber(input string) (int64, error) {
-	// Define a regular expression to match the first group of numbers
-	re := regexp.MustCompile(`(\d+)`)
+	var sb strings.Builder
+	// runel := []rune(input)
 
-	// Find the first match
-	match := re.FindStringSubmatch(input)
-
-	// if len(match) < 2 {
-	// 	return 0, fmt.Errorf("No numbers found in the input string")
-	// }
-
-	// Parse the matched numbers as int64
-	number, err := strconv.ParseInt(match[0], 10, 64)
-	if err != nil {
-		return 0, err
+	for _, i := range input {
+		if unicode.IsDigit(i) {
+			sb.WriteRune(i)
+		} else {
+			break
+		}
 	}
 
-	return number, nil
+	return strconv.ParseInt(sb.String(), 10, 64)
 }
 
 
