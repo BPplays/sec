@@ -74,9 +74,17 @@ var common_prefixes = map[string]Prefix{
 
 
 
-func fmt_epoch_to_prefixsec(utime int64, prefixes map[string]Prefix, break_prefix string) string {
+func fmt_epoch_to_prefixsec(utime int64, prefixes map[string]Prefix, break_prefix string, mul *float64) string {
 	var output strings.Builder
-	fl_time := float64(utime)
+
+	var fl_time float64
+
+	if mul != nil {
+		fl_time = float64(utime) * *(mul)
+	} else {
+		fl_time = float64(utime)
+	}
+	
 	var fl_round_time float64
 
 
@@ -124,14 +132,21 @@ func removeSingleTrailingSpace(input string) string {
 
 func main() {
 
+	var epochTime int64
+
 	var utime *int64
 	var millisecflag bool
+	var microsecflag bool
+	var nanosecflag bool
+
 
 	var break_prefix string = "milli"
 
 	// Set up the command line flags
 	pflag.Int64P("utime", "i", 0, "Specify the utime value")
-	pflag.BoolVarP(&millisecflag, "m", "m", false, "micro")
+	pflag.BoolVarP(&millisecflag, "m", "m", false, "milli")
+	pflag.BoolVarP(&microsecflag, "micro", "µ", false, "micro")
+	pflag.BoolVarP(&nanosecflag, "n", "n", false, "nano")
 	pflag.Parse()
 
 	// Bind the viper configuration to the command line flags
@@ -146,24 +161,47 @@ func main() {
 	}
 
 	millisec := viper.GetBool("m")
+	microsec := viper.GetBool("micro")
+	nanosec := viper.GetBool("n")
 
 	// Get the current time in UTC
 	currentTime := time.Now().UTC()
 
 	// Get the Unix epoch time in seconds
-	epochTime := currentTime.Unix()
+
+	var mul_val float64 = 1
+	
+	var mul *float64
+
+	mul = &mul_val
+
+
+
+	if millisec {
+		epochTime = currentTime.UnixMilli()
+		break_prefix = "micro"
+		*(mul) = math.Pow(10, -3)
+	} else if microsec {
+		epochTime = currentTime.UnixMicro()
+		break_prefix = "nano"
+		*(mul) = math.Pow(10, -6)
+	} else if nanosec {
+		epochTime = currentTime.UnixNano()
+		break_prefix = "pico"
+		*(mul) = math.Pow(10, -9)
+	} else {
+		epochTime = currentTime.Unix()
+		mul = nil
+	}
+
 
 	if utime == nil {
 		// fmt.Println("utime is not assigned. Using default value.")
 		utime = &epochTime
 	}
 
-	if millisec {
-		break_prefix = "micro"
-	}
 
 
-
-	fmt.Println(fmt_epoch_to_prefixsec((*utime), common_prefixes, break_prefix))
+	fmt.Println(fmt_epoch_to_prefixsec((*utime), common_prefixes, break_prefix, mul))
 
 }
