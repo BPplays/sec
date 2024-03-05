@@ -129,6 +129,8 @@ func removeSingleTrailingSpace(input string) string {
 	return input
 }
 
+const customLayout = "2006/01/02 15:04:05"
+
 
 func main() {
 
@@ -141,6 +143,8 @@ func main() {
 
 	var baresecflag bool
 
+	var date string
+
 
 	var break_prefix string = "milli"
 
@@ -151,6 +155,8 @@ func main() {
 	pflag.BoolVarP(&nanosecflag, "nano", "n", false, "nanoseconds")
 
 	pflag.BoolVarP(&baresecflag, "bare", "b", false, "bareseconds format")
+
+	pflag.StringVarP(&date, "date", "d", "", "date format")
 
 
 	pflag.Parse()
@@ -165,6 +171,7 @@ func main() {
 	} else {
 		utime = nil
 	}
+
 
 	millisec := viper.GetBool("milli")
 	microsec := viper.GetBool("micro")
@@ -208,9 +215,12 @@ func main() {
 		utime = &epochTime
 	}
 
+	// time.
 
 	if baresec{
 		fmt.Println((*utime))
+	} else if date != "" {
+		time.Parse(customLayout, date)
 	} else {
 		fmt.Println(fmt_epoch_to_prefixsec((*utime), common_prefixes, break_prefix, mul))
 	}
