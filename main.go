@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ncruces/go-strftime"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
@@ -220,12 +221,14 @@ func main() {
 	if baresec{
 		fmt.Println((*utime))
 	} else if date != "" {
-		date, err := time.Parse(customLayout, date)
+		// date, err := time.Parse(customLayout, date)
+		format := "%Y/%m/%d %H:%M:%S"
+		date_p, err := strftime.Parse(date, format)
 		if err != nil {
 			fmt.Println("err:", err)
 		}
-		fmt.Println(date)
-		fmt.Println(date.Unix())
+		fmt.Println(date_p)
+		fmt.Println(date_p.Unix())
 	} else {
 		fmt.Println(fmt_epoch_to_prefixsec((*utime), common_prefixes, break_prefix, mul))
 	}
