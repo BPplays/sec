@@ -149,7 +149,7 @@ func findAndParseNumber(input string) (int64, error) {
 	// }
 
 	// Parse the matched numbers as int64
-	number, err := strconv.ParseInt(match[1], 10, 64)
+	number, err := strconv.ParseInt(match[0], 10, 64)
 	if err != nil {
 		return 0, err
 	}
@@ -179,6 +179,7 @@ func parse_prefix_sec(input string) int64 {
 		prefix := rune_list[len(rune_list)-2]
 		if prefix == ' ' || unicode.IsDigit(prefix) {
 			total += num
+			continue
 		}
 
 		for _, value := range AllPrefixes {
