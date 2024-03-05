@@ -125,9 +125,13 @@ func removeSingleTrailingSpace(input string) string {
 func main() {
 
 	var utime *int64
+	var millisec bool
+
+	var break_prefix string = "milli"
 
 	// Set up the command line flags
 	pflag.Int64P("utime", "i", 0, "Specify the utime value")
+	pflag.BoolVarP(&millisec, "m", "m", false, "Specify a boolean value")
 	pflag.Parse()
 
 	// Bind the viper configuration to the command line flags
@@ -141,6 +145,8 @@ func main() {
 		utime = nil
 	}
 
+	millisec = viper.GetBool("m")
+
 	// Get the current time in UTC
 	currentTime := time.Now().UTC()
 
@@ -152,8 +158,12 @@ func main() {
 		utime = &epochTime
 	}
 
+	if millisec {
+		break_prefix = "micro"
+	}
 
 
-	fmt.Println(fmt_epoch_to_prefixsec((*utime), common_prefixes, "milli"))
+
+	fmt.Println(fmt_epoch_to_prefixsec((*utime), common_prefixes, break_prefix))
 
 }
