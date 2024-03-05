@@ -222,7 +222,7 @@ func main() {
 		fmt.Println((*utime))
 	} else if date != "" {
 		// date, err := time.Parse(customLayout, date)
-		format := "%Y/%m/%d %H:%M:%S"
+		format := "%Y/%m/%d %H:%M"
 		date_p, err := strftime.Parse(date, format)
 		if err != nil {
 			fmt.Println("err:", err)
