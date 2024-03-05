@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math"
-	"os"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
+
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 )
 
 
@@ -124,7 +124,22 @@ func removeSingleTrailingSpace(input string) string {
 
 func main() {
 
-	var utime int64
+	var utime *int64
+
+	// Set up the command line flags
+	pflag.Int64P("utime", "i", 0, "Specify the utime value")
+	pflag.Parse()
+
+	// Bind the viper configuration to the command line flags
+	viper.BindPFlags(pflag.CommandLine)
+
+	// Get the utime value from the configuration
+	if viper.IsSet("utime") {
+		utimeValue := viper.GetInt64("utime")
+		utime = &utimeValue
+	} else {
+		utime = nil
+	}
 
 	// Get the current time in UTC
 	currentTime := time.Now().UTC()
@@ -132,20 +147,13 @@ func main() {
 	// Get the Unix epoch time in seconds
 	epochTime := currentTime.Unix()
 
-	if len(os.Args) > 1 {
-		num, err := strconv.ParseInt(os.Args[1], 10, 64)
-		if err != nil {
-			// utime = epochTime
-			log.Fatal("error can't parse number")
-		} else {
-			utime = num
-		}
-    } else {
-		utime = epochTime
-    }
+	if utime == nil {
+		fmt.Println("utime is not assigned. Using default value.")
+		utime = &epochTime
+	}
 
 
 
-	fmt.Println(fmt_epoch_to_prefixsec(utime, common_prefixes, "milli"))
+	fmt.Println(fmt_epoch_to_prefixsec((*utime), common_prefixes, "milli"))
 
 }
