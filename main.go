@@ -145,7 +145,7 @@ func main() {
 		utime = nil
 	}
 
-	millisec = viper.GetBool("m")
+	millisec := viper.GetBool("m")
 
 	// Get the current time in UTC
 	currentTime := time.Now().UTC()
