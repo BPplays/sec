@@ -29,6 +29,15 @@ var time_sep = map[rune]bool{
 	':': true,
 }
 
+var builder_order []string = []string{
+	"year",
+	"mon",
+	"day",
+	"hr",
+	"min",
+	"sec",
+}
+
 var builders = map[string]*strings.Builder{
 	"year": new(strings.Builder),
 	"mon":  new(strings.Builder),
@@ -53,16 +62,23 @@ func parse_date(in string) time.Time {
 
 	runel := []rune(in)
 
-	for builder_name, builder := range builders {
-		for _, i := range runel {
+	for _, builder_name := range builder_order {
+
+		for nu, i := range runel {
+			fmt.Println(builder_name, " ", builders[builder_name].String(), "\n", builders_sep[builder_name][i], builders_sep[builder_name])
+			if nu > 0 {
+				runel = runel[1:]
+			}
 			if builders_sep[builder_name][i] {
 				break
 			} else {
 				builders[builder_name].WriteRune(i)
-				fmt.Println(builder_name, " ", builder.String())
+				// fmt.Println(builder_name, " ", builders[builder_name].String())
 			}
 		}
-		runel = runel[1:]
+		fmt.Println("runel: ", string(runel))
+		fmt.Println()
+		// runel = runel[1:]
 
 	}
 
