@@ -8,11 +8,7 @@ import (
 	"time"
 )
 
-func exerr(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
-}
+
 
 var date_sep = map[rune]bool{
 	'/': true,
