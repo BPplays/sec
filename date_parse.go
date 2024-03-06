@@ -62,17 +62,30 @@ func parse_date(in string) time.Time {
 
 	}
 
-	year, err := strconv.Atoi(builders["year"].String())
+	var b strings.Builder
+
+	b = builders["year"]
+	year, err := strconv.Atoi(b.String())
 	exerr(err)
-	mon, err := strconv.Atoi(builders["mon"].String())
+
+	b = builders["mon"]
+	mon, err := strconv.Atoi(b.String())
 	exerr(err)
-	day, err := strconv.Atoi(builders["day"].String())
+
+	b = builders["day"]
+	day, err := strconv.Atoi(b.String())
 	exerr(err)
-	hr, err := strconv.Atoi(builders["hr"].String())
+
+	b = builders["hr"]
+	hr, err := strconv.Atoi(b.String())
 	exerr(err)
-	min, err := strconv.Atoi(builders["min"].String())
+
+	b = builders["min"]
+	min, err := strconv.Atoi(b.String())
 	exerr(err)
-	sec, err := strconv.Atoi(builders["sec"].String())
+
+	b = builders["sec"]
+	sec, err := strconv.Atoi(b.String())
 	exerr(err)
 	// out_time.AddDate()
 	out_time = time.Date(year, time.Month(mon), day, hr, min, sec, 0, time.UTC)
