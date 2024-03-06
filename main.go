@@ -142,7 +142,7 @@ func findAndParseNumber(input string) (int64, error) {
 	// runel := []rune(input)
 
 	for _, i := range input {
-		if unicode.IsDigit(i) {
+		if unicode.IsDigit(i) || i == '-' {
 			sb.WriteRune(i)
 		} else {
 			break
