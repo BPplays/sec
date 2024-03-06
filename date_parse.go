@@ -143,7 +143,7 @@ func parse_date(in string) time.Time {
 		}
 		// fmt.Println(hr, min, sec)
 
-	} else if len([]rune(strconv.Itoa(hr))) >= 2 {
+	} else if len([]rune(strconv.Itoa(hr))) > 2 {
 		fmt.Println(hr)
 		log.Fatal("wrong time format")
 	}
