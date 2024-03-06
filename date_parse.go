@@ -64,11 +64,11 @@ func parse_date(in string) time.Time {
 
 	for _, builder_name := range builder_order {
 
-		for nu, i := range runel {
+		for _, i := range runel {
 			fmt.Println(builder_name, " ", builders[builder_name].String(), "\n", builders_sep[builder_name][i], builders_sep[builder_name])
-			if nu > 0 {
-				runel = runel[1:]
-			}
+			// if nu > 0 {
+			runel = runel[1:]
+			// }
 			if builders_sep[builder_name][i] {
 				break
 			} else {
@@ -87,28 +87,40 @@ func parse_date(in string) time.Time {
 	// b = builders["year"]
 	year, err := strconv.Atoi(builders["year"].String())
 	if err != nil {
-		log.Fatal("yr", err)
+		year = 0
 	}
 
 	// b = builders["mon"]
 	mon, err := strconv.Atoi(builders["mon"].String())
-	exerr(err)
+	if err != nil {
+		mon = 0
+	}
 
 	// b = builders["day"]
 	day, err := strconv.Atoi(builders["day"].String())
-	exerr(err)
+	if err != nil {
+		day = 0
+	}
 
 	// b = builders["hr"]
 	hr, err := strconv.Atoi(builders["hr"].String())
-	exerr(err)
+	if err != nil {
+		hr = 0
+	}
 
 	// b = builders["min"]
 	min, err := strconv.Atoi(builders["min"].String())
-	exerr(err)
+	if err != nil {
+		min = 0
+	}
 
 	// b = builders["sec"]
 	sec, err := strconv.Atoi(builders["sec"].String())
-	exerr(err)
+	if err != nil {
+		sec = 0
+	}
+
+
 	// out_time.AddDate()
 	out_time = time.Date(year, time.Month(mon), day, hr, min, sec, 0, time.UTC)
 	if err != nil {
