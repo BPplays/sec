@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -28,13 +29,13 @@ var time_sep = map[rune]bool{
 	':': true,
 }
 
-var builders = map[string]strings.Builder{
-	"year": strings.Builder{},
-	"mon": strings.Builder{},
-	"day": strings.Builder{},
-	"hr": strings.Builder{},
-	"min": strings.Builder{},
-	"sec": strings.Builder{},
+var builders = map[string]*strings.Builder{
+	"year": new(strings.Builder),
+	"mon":  new(strings.Builder),
+	"day":  new(strings.Builder),
+	"hr":   new(strings.Builder),
+	"min":  new(strings.Builder),
+	"sec":  new(strings.Builder),
 }
 
 var builders_sep = map[string]map[rune]bool{
@@ -50,44 +51,44 @@ var builders_sep = map[string]map[rune]bool{
 func parse_date(in string) time.Time {
 	var out_time time.Time
 
-	for builder_name, builder := range builders {
-		for _, i := range in {
+	for _, i := range in {
+		for builder_name, builder := range builders {
 			if builders_sep[builder_name][i] {
 				continue
 			} else {
-				builder.WriteRune(i)
-				// builder.String()
+				builders[builder_name].WriteRune(i)
+				fmt.Println(builder_name, " ", builder.String())
 			}
 		}
 
 	}
 
-	var b strings.Builder
+	// var b strings.Builder
 
-	b = builders["year"]
-	year, err := strconv.Atoi(b.String())
+	// b = builders["year"]
+	year, err := strconv.Atoi(builders["year"].String())
 	if err != nil {
-		log.Fatal("yr", err)
+		log.Fatal("yr ", err)
 	}
 
-	b = builders["mon"]
-	mon, err := strconv.Atoi(b.String())
+	// b = builders["mon"]
+	mon, err := strconv.Atoi(builders["mon"].String())
 	exerr(err)
 
-	b = builders["day"]
-	day, err := strconv.Atoi(b.String())
+	// b = builders["day"]
+	day, err := strconv.Atoi(builders["day"].String())
 	exerr(err)
 
-	b = builders["hr"]
-	hr, err := strconv.Atoi(b.String())
+	// b = builders["hr"]
+	hr, err := strconv.Atoi(builders["hr"].String())
 	exerr(err)
 
-	b = builders["min"]
-	min, err := strconv.Atoi(b.String())
+	// b = builders["min"]
+	min, err := strconv.Atoi(builders["min"].String())
 	exerr(err)
 
-	b = builders["sec"]
-	sec, err := strconv.Atoi(b.String())
+	// b = builders["sec"]
+	sec, err := strconv.Atoi(builders["sec"].String())
 	exerr(err)
 	// out_time.AddDate()
 	out_time = time.Date(year, time.Month(mon), day, hr, min, sec, 0, time.UTC)
