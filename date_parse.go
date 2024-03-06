@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -61,7 +60,7 @@ func parse_date(in string) time.Time {
 	for _, builder_name := range builder_order {
 
 		for _, i := range runel {
-			fmt.Println(builder_name, " ", builders[builder_name].String(), "\n", builders_sep[builder_name][i], builders_sep[builder_name])
+			// fmt.Println(builder_name, " ", builders[builder_name].String(), "\n", builders_sep[builder_name][i], builders_sep[builder_name])
 			// if nu > 0 {
 			runel = runel[1:]
 			// }
@@ -72,8 +71,8 @@ func parse_date(in string) time.Time {
 				// fmt.Println(builder_name, " ", builders[builder_name].String())
 			}
 		}
-		fmt.Println("runel: ", string(runel))
-		fmt.Println()
+		// fmt.Println("runel: ", string(runel))
+		// fmt.Println()
 		// runel = runel[1:]
 
 	}
@@ -115,13 +114,44 @@ func parse_date(in string) time.Time {
 	if err != nil {
 		sec = 0
 	}
+	// fmt.Println(hr)
+	if len([]rune(strconv.Itoa(hr))) == 4 || len([]rune(strconv.Itoa(hr))) == 6 {
+		// fmt.Println(hr)
+		numStr := []rune(strconv.Itoa(hr))
+
+		hr, err = strconv.Atoi(string(numStr[0])+string(numStr[1]))
+		if err != nil {
+			hr = 0
+			// log.Println(err, string(numStr))
+		}
+
+		min, err = strconv.Atoi(string(numStr[2])+string(numStr[3]))
+		if err != nil {
+			min = 0
+			// log.Println(err)
+		}
+
+		if len(numStr) == 6 {
+
+			sec, err = strconv.Atoi(string(numStr[4])+string(numStr[5]))
+			if err != nil {
+				sec = 0
+				// log.Println(err)
+			}
+
+		}
+		// fmt.Println(hr, min, sec)
+
+	} else if len([]rune(strconv.Itoa(hr))) >= 2 {
+		log.Fatal("wrong time format")
+	}
 
 
 	// out_time.AddDate()
 	out_time = time.Date(year, time.Month(mon), day, hr, min, sec, 0, time.UTC)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 	// return strconv.ParseInt(sb.String(), 10, 64)
 	return out_time
 }
