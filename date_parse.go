@@ -66,7 +66,9 @@ func parse_date(in string) time.Time {
 
 	b = builders["year"]
 	year, err := strconv.Atoi(b.String())
-	exerr(err)
+	if err != nil {
+		log.Fatal("yr", err)
+	}
 
 	b = builders["mon"]
 	mon, err := strconv.Atoi(b.String())
