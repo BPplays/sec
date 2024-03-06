@@ -11,7 +11,6 @@ import (
 	"unicode"
 
 	// "github.com/BPplays/dateparse"
-	"github.com/araddon/dateparse"
 
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -309,10 +308,13 @@ func main() {
 		// date, err := time.Parse(customLayout, date)
 		// format := "%Y/%m/%d %H:%M"
 		// date_p, err := strftime.Parse(date, format)
-		parsed_date, err := dateparse.ParseStrict(date)
-		if err != nil {
-			fmt.Println("err:", err)
-		}
+		// parsed_date, err := dateparse.ParseStrict(date)
+		// if err != nil {
+		// 	fmt.Println("err:", err)
+		// }
+
+		parsed_date := parse_date(date)
+		
 		fmt.Println(parsed_date)
 		fmt.Println(parsed_date.Unix())
 	} else if date_out {
