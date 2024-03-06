@@ -302,9 +302,7 @@ func main() {
 
 	// time.
 
-	if baresec{
-		fmt.Println((*utime))
-	} else if date != "" {
+	if date != "" {
 		// date, err := time.Parse(customLayout, date)
 		// format := "%Y/%m/%d %H:%M"
 		// date_p, err := strftime.Parse(date, format)
@@ -315,9 +313,27 @@ func main() {
 
 		parsed_date := parse_date(date)
 		
-		fmt.Println(parsed_date)
-		fmt.Println(parsed_date.Unix())
-	} else if date_out {
+		// fmt.Println(parsed_date)
+		// fmt.Println(parsed_date.Unix())
+		if millisec {
+			epochTime = parsed_date.UnixMilli()
+			break_prefix = "micro"
+			*(mul) = math.Pow(10, -3)
+		} else if microsec {
+			epochTime = parsed_date.UnixMicro()
+			break_prefix = "nano"
+			*(mul) = math.Pow(10, -6)
+		} else if nanosec {
+			epochTime = parsed_date.UnixNano()
+			break_prefix = "pico"
+			*(mul) = math.Pow(10, -9)
+		} else {
+			epochTime = parsed_date.Unix()
+			mul = nil
+		}
+		utime = &epochTime
+	} 
+	if date_out {
 		var date_out time.Time
 
 		var format string
@@ -338,7 +354,12 @@ func main() {
 
 		fmt.Printf("local: %v\nUTC: %v\n",date_out.Format(format) ,date_out.UTC().Format(format))
 	} else {
-		fmt.Println(fmt_epoch_to_prefixsec((*utime), common_prefixes, break_prefix, mul))
+		if baresec{
+			fmt.Println((*utime))
+		} else {
+			fmt.Println(fmt_epoch_to_prefixsec((*utime), common_prefixes, break_prefix, mul))
+		}
+		
 	}
 
 }
