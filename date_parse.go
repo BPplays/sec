@@ -51,15 +51,18 @@ var builders_sep = map[string]map[rune]bool{
 func parse_date(in string) time.Time {
 	var out_time time.Time
 
-	for _, i := range in {
-		for builder_name, builder := range builders {
+	runel := []rune(in)
+
+	for builder_name, builder := range builders {
+		for _, i := range runel {
 			if builders_sep[builder_name][i] {
-				continue
+				break
 			} else {
 				builders[builder_name].WriteRune(i)
 				fmt.Println(builder_name, " ", builder.String())
 			}
 		}
+		runel = runel[1:]
 
 	}
 
@@ -68,7 +71,7 @@ func parse_date(in string) time.Time {
 	// b = builders["year"]
 	year, err := strconv.Atoi(builders["year"].String())
 	if err != nil {
-		log.Fatal("yr ", err)
+		log.Fatal("yr", err)
 	}
 
 	// b = builders["mon"]
