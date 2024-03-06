@@ -233,7 +233,7 @@ func main() {
 
 	pflag.BoolVarP(&baresecflag, "bare", "b", false, "bareseconds format")
 
-	pflag.StringVarP(&date, "date", "d", "", "date format")
+	pflag.StringVarP(&date, "date", "d", "", "date input, yyyy/mm/dd HH:mm(:ss)")
 
 	pflag.BoolVarP(&date_out, "date_out", "o", false, "date output")
 
