@@ -75,7 +75,7 @@ func parse_date(in string) time.Time {
 	sec, err := strconv.Atoi(builders["sec"].String())
 	exerr(err)
 	// out_time.AddDate()
-	out_time = time.Date(year, time.Month(mon), day, hr, min, sec, 0, 0, time.UTC)
+	out_time = time.Date(year, time.Month(mon), day, hr, min, sec, 0, time.UTC)
 	if err != nil {
 		log.Fatal(err)
 	}
