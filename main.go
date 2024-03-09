@@ -81,10 +81,12 @@ var common_prefixes = map[string]Prefix{
 var leading_zero bool
 
 
-func fmt_epoch_to_prefixsec(utime int64, prefixes map[string]Prefix, break_prefix string, mul *float64) string {
+func fmt_epoch_to_prefixsec(utime int64, prefixesp *map[string]Prefix, break_prefix string, mul *float64) string {
 	var output strings.Builder
 
 	var fl_time float64
+
+	prefixes := *(prefixesp)
 
 	if mul != nil {
 		fl_time = float64(utime) * *(mul)
@@ -105,18 +107,41 @@ func fmt_epoch_to_prefixsec(utime int64, prefixes map[string]Prefix, break_prefi
 		return prefixes[keys[i]].Base10 > prefixes[keys[j]].Base10
 	})
 
+	break_next := false
+
+	var value Prefix
+	var next_value Prefix
+	var powerDifference float64
+
+	var first_non0 bool = false
 	// Iterate over the sorted keys
-	for _, key := range keys {
-		value := prefixes[key]
-		if key == break_prefix {
-			break
+	for i, key := range keys {
+		value = prefixes[key]
+
+		if i+1 < len(prefixes) {
+			next_value = prefixes[keys[i+1]]
+
+			powerDifference = math.Log10(value.Base10) - math.Log10(next_value.Base10)
+		} else {
+			powerDifference = 3
 		}
 
 
-		if fl_time / value.Base10 >= 1 {
+		if break_next {
+			break
+		}
+		if key == break_prefix {
+			break_next = true
+		}
+
+
+		if fl_time / value.Base10 >= 1 || (show_all_values && first_non0) || show_all_values_super {
+			first_non0 = true
 			fl_round_time = math.Floor(fl_time / value.Base10)
 			if leading_zero {
-				output.WriteString(fmt.Sprintf("%03.0f%v",fl_round_time, value.Symbol+"s"))
+				formatString := fmt.Sprintf("%%0%d.0f%%v", int(powerDifference))
+				// fmt.Println(formatString)
+				output.WriteString(fmt.Sprintf(formatString,fl_round_time, value.Symbol+"s"))
 			} else {
 				output.WriteString(fmt.Sprintf("%v%v",fl_round_time, value.Symbol+"s"))
 			}
@@ -203,7 +228,8 @@ func parse_prefix_sec(input string) int64 {
 
 
 
-
+var show_all_values bool
+var show_all_values_super bool
 
 
 
@@ -224,19 +250,25 @@ func main() {
 
 	var date_out bool
 
+	var use_all_prefixes bool
 
-	var break_prefix string = "milli"
+	var prefix_to_use *map[string]Prefix
+
+
+	var last_prefix string = ""
+
+	var last_prefix_override string = ""
 
 	// Set up the command line flags
-	pflag.Int64P("int_second", "i", 0, "int_second input")
-	pflag.StringVarP(&prefix_second, "prefix_second", "p", "", "prefix_second input")
+	pflag.Int64P("int_second", "i", 0, "integer second input, e.g. 1709999172")
+	pflag.StringVarP(&prefix_second, "prefix_second", "p", "", "input seconds with prefixes, e.g. 1Gs 709Ms 999ks 57s")
 
 
 	pflag.BoolVarP(&millisecflag, "milli", "m", false, "milliseconds")
 	pflag.BoolVarP(&microsecflag, "micro", "6", false, "microseconds (6 is for 10^-6 what micro stands for)")
 	pflag.BoolVarP(&nanosecflag, "nano", "n", false, "nanoseconds")
 
-	pflag.BoolVarP(&baresecflag, "bare", "b", false, "bareseconds format")
+	pflag.BoolVarP(&baresecflag, "bare", "b", false, "bare integer seconds output")
 
 	pflag.StringVarP(&date, "date", "d", "", "date input, yyyy/mm/dd HH:mm(:ss)")
 
@@ -244,8 +276,29 @@ func main() {
 
 	pflag.BoolVarP(&leading_zero, "leading_zeros", "l", false, "leading zeros for prefix output")
 
+	pflag.BoolVarP(&use_all_prefixes, "all-prefixes", "a", false, "use all prefixes instead of just common ones with a difference of 10^3")
+
+	// pflag.BoolVarP(&show_all_values, "show_all_values", "s", false, "show_all_values even 0 ones up to last_prefix excluding 0 values before the first greater then 1")
+	var hide_all_val bool
+	pflag.BoolVarP(&hide_all_val, "hide_zero", "h", false, "hide_zero values inside the main block")
+	pflag.BoolVarP(&show_all_values_super, "show_all_values_even_aller", "S", false, "show_all_values even 0 ones up to last_prefix including 0 values before the first greater then 1")
+
+	pflag.StringVarP(&last_prefix_override, "last_prefix_override", "r", "none", "break_prefix_override")
+
 
 	pflag.Parse()
+
+	if hide_all_val {
+		show_all_values = false
+	} else {
+		show_all_values = true
+	}
+
+	if use_all_prefixes {
+		prefix_to_use = &AllPrefixes
+	} else {
+		prefix_to_use = &common_prefixes
+	}
 
 	// Bind the viper configuration to the command line flags
 	viper.BindPFlags(pflag.CommandLine)
@@ -286,16 +339,16 @@ func main() {
 
 	if millisec {
 		epochTime = currentTime.UnixMilli()
-		break_prefix = "micro"
+		last_prefix = "milli"
 		*(mul) = math.Pow(10, -3)
 		// time.Unix()
 	} else if microsec {
 		epochTime = currentTime.UnixMicro()
-		break_prefix = "nano"
+		last_prefix = "micro"
 		*(mul) = math.Pow(10, -6)
 	} else if nanosec {
 		epochTime = currentTime.UnixNano()
-		break_prefix = "pico"
+		last_prefix = "nano"
 		*(mul) = math.Pow(10, -9)
 	} else {
 		epochTime = currentTime.Unix()
@@ -325,15 +378,15 @@ func main() {
 		// fmt.Println(parsed_date.Unix())
 		if millisec {
 			epochTime = parsed_date.UnixMilli()
-			break_prefix = "micro"
+			last_prefix = "milli"
 			*(mul) = math.Pow(10, -3)
 		} else if microsec {
 			epochTime = parsed_date.UnixMicro()
-			break_prefix = "nano"
+			last_prefix = "micro"
 			*(mul) = math.Pow(10, -6)
 		} else if nanosec {
 			epochTime = parsed_date.UnixNano()
-			break_prefix = "pico"
+			last_prefix = "nano"
 			*(mul) = math.Pow(10, -9)
 		} else {
 			epochTime = parsed_date.Unix()
@@ -365,7 +418,10 @@ func main() {
 		if baresec{
 			fmt.Println((*utime))
 		} else {
-			fmt.Printf(fmt_epoch_to_prefixsec((*utime), common_prefixes, break_prefix, mul))
+			if last_prefix_override != "" {
+				last_prefix = last_prefix_override
+			}
+			fmt.Println(fmt_epoch_to_prefixsec((*utime), prefix_to_use, last_prefix, mul))
 		}
 		
 	}
