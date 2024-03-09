@@ -300,7 +300,7 @@ func main() {
 
 	pflag.BoolVar(&debug, "dbg", false, "debug")
 
-	pflag.StringVarP(&last_prefix_override, "last_prefix_override", "f", "none", "override the last prefix to use")
+	pflag.StringVarP(&last_prefix_override, "last_prefix_override", "f", "none", "override the last prefix to use. e.g. milli the last prefix you'll see is milli. note: none does not equal blank none means stop at no prefix")
 
 	pflag.Int64VarP(&round_power, "round", "r", 0, "power of 10 to round to")
 
