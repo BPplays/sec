@@ -78,7 +78,7 @@ var common_prefixes = map[string]Prefix{
 	"quecto": {Symbol: "q", Base10: math.Pow(10, -30), FullName: "quecto", Adoption: 2022},
 }
 
-
+var leading_zero bool
 
 
 func fmt_epoch_to_prefixsec(utime int64, prefixes map[string]Prefix, break_prefix string, mul *float64) string {
@@ -115,7 +115,12 @@ func fmt_epoch_to_prefixsec(utime int64, prefixes map[string]Prefix, break_prefi
 
 		if fl_time / value.Base10 >= 1 {
 			fl_round_time = math.Floor(fl_time / value.Base10)
-			output.WriteString(fmt.Sprintf("%v%v",fl_round_time, value.Symbol+"s"))
+			if leading_zero {
+				output.WriteString(fmt.Sprintf("%03.0f%v",fl_round_time, value.Symbol+"s"))
+			} else {
+				output.WriteString(fmt.Sprintf("%v%v",fl_round_time, value.Symbol+"s"))
+			}
+			
 			fl_time = fl_time - (fl_round_time * value.Base10)
 			output.WriteString(" ")
 		}
@@ -237,6 +242,8 @@ func main() {
 
 	pflag.BoolVarP(&date_out, "date_out", "o", false, "date output")
 
+	pflag.BoolVarP(&leading_zero, "leading_zeros", "l", false, "leading zeros for prefix output")
+
 
 	pflag.Parse()
 
@@ -281,6 +288,7 @@ func main() {
 		epochTime = currentTime.UnixMilli()
 		break_prefix = "micro"
 		*(mul) = math.Pow(10, -3)
+		// time.Unix()
 	} else if microsec {
 		epochTime = currentTime.UnixMicro()
 		break_prefix = "nano"
@@ -357,7 +365,7 @@ func main() {
 		if baresec{
 			fmt.Println((*utime))
 		} else {
-			fmt.Println(fmt_epoch_to_prefixsec((*utime), common_prefixes, break_prefix, mul))
+			fmt.Printf(fmt_epoch_to_prefixsec((*utime), common_prefixes, break_prefix, mul))
 		}
 		
 	}
