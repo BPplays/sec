@@ -295,7 +295,7 @@ func main() {
 
 	// pflag.BoolVarP(&show_all_values, "show_all_values", "s", false, "show_all_values even 0 ones up to last_prefix excluding 0 values before the first greater then 1")
 	var hide_all_val bool
-	pflag.BoolVarP(&hide_all_val, "hide_zero", "h", false, "hide_zero values inside the main block")
+	pflag.BoolVarP(&hide_all_val, "hide_zero", "h", false, "hide zero values inside the main block. e.g. 1Gs 154Ms 0ks 54s -> 1Gs 154Ms 54s")
 	pflag.BoolVarP(&show_all_values_super, "show_all_values_even_aller", "S", false, "show_all_values even 0 ones up to last_prefix including 0 values before the first greater then 1")
 
 	pflag.BoolVar(&debug, "dbg", false, "debug")
