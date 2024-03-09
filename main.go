@@ -136,10 +136,9 @@ func fmt_epoch_to_prefixsec(utime int64, prefixesp *map[string]Prefix, break_pre
 
 
 		if fl_time / value.Base10 >= 1 || (show_all_values && first_non0) || show_all_values_super {
-			first_non0 = true
 			fl_round_time = math.Floor(fl_time / value.Base10)
-			if leading_zero {
-				formatString := fmt.Sprintf("%%0%d.0f%%v", int(powerDifference))
+			if leading_zero && ((!(leading_zero_start_from_sec && !first_non0))) {
+				formatString := fmt.Sprintf("%%0%d.0f%%v", int(math.Round(powerDifference)))
 				// fmt.Println(formatString)
 				output.WriteString(fmt.Sprintf(formatString,fl_round_time, value.Symbol+"s"))
 			} else {
@@ -148,8 +147,9 @@ func fmt_epoch_to_prefixsec(utime int64, prefixesp *map[string]Prefix, break_pre
 			
 			fl_time = fl_time - (fl_round_time * value.Base10)
 			output.WriteString(" ")
+			first_non0 = true
 		}
-
+		
 	}
 
 	return removeSingleTrailingSpace(output.String())
@@ -231,6 +231,8 @@ func parse_prefix_sec(input string) int64 {
 var show_all_values bool
 var show_all_values_super bool
 
+var leading_zero_start_from_sec bool
+
 
 
 func main() {
@@ -275,6 +277,7 @@ func main() {
 	pflag.BoolVarP(&date_out, "date_out", "o", false, "date output")
 
 	pflag.BoolVarP(&leading_zero, "leading_zeros", "l", false, "leading zeros for prefix output")
+	pflag.BoolVarP(&leading_zero_start_from_sec, "leading_zeros_start_from_sec", "s", false, "disables leading zeros for first prefix")
 
 	pflag.BoolVarP(&use_all_prefixes, "all-prefixes", "a", false, "use all prefixes instead of just common ones with a difference of 10^3")
 
