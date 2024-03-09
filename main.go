@@ -302,7 +302,7 @@ func main() {
 
 	pflag.StringVarP(&last_prefix_override, "last_prefix_override", "f", "none", "override the last prefix to use. e.g. milli the last prefix you'll see is milli. note: none does not equal blank none means stop at no prefix")
 
-	pflag.Int64VarP(&round_power, "round", "r", 0, "rounds down, the number is the power of 10 to round to")
+	pflag.Int64VarP(&round_power, "round", "r", 0, "rounds down, the number is the power of 10 to round to, e.g. 1 rounds to nearest 10, 2 rounds to nearest 100")
 
 
 	pflag.Parse()
