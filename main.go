@@ -93,6 +93,10 @@ func fmt_epoch_to_prefixsec(utime int64, prefixesp *map[string]Prefix, break_pre
 	} else {
 		fl_time = float64(utime)
 	}
+
+	if round_power != 0 {
+		fl_time = math.Floor(fl_time / math.Pow10(int(round_power))) * math.Pow10(int(round_power))
+	}
 	
 	var fl_round_time float64
 
@@ -137,6 +141,7 @@ func fmt_epoch_to_prefixsec(utime int64, prefixesp *map[string]Prefix, break_pre
 
 		if fl_time / value.Base10 >= 1 || (show_all_values && first_non0) || show_all_values_super {
 			fl_round_time = math.Floor(fl_time / value.Base10)
+			// fl_round_time = math.Floor(fl_round_time / math.Pow10(int(round_power))) * math.Pow10(int(round_power))
 			if leading_zero && ((!(leading_zero_start_from_sec && !first_non0))) {
 				formatString := fmt.Sprintf("%%0%d.0f%%v", int(math.Round(powerDifference)))
 				// fmt.Println(formatString)
@@ -235,6 +240,10 @@ var leading_zero_start_from_sec bool
 
 
 
+var round_power int64
+
+
+
 func main() {
 
 	var epochTime int64
@@ -255,11 +264,14 @@ func main() {
 	var use_all_prefixes bool
 
 	var prefix_to_use *map[string]Prefix
-
+	var debug bool
+	var startTime time.Time
 
 	var last_prefix string = ""
 
 	var last_prefix_override string = ""
+
+
 
 	// Set up the command line flags
 	pflag.Int64P("int_second", "i", 0, "integer second input, e.g. 1709999172")
@@ -286,10 +298,18 @@ func main() {
 	pflag.BoolVarP(&hide_all_val, "hide_zero", "h", false, "hide_zero values inside the main block")
 	pflag.BoolVarP(&show_all_values_super, "show_all_values_even_aller", "S", false, "show_all_values even 0 ones up to last_prefix including 0 values before the first greater then 1")
 
-	pflag.StringVarP(&last_prefix_override, "last_prefix_override", "r", "none", "break_prefix_override")
+	pflag.BoolVar(&debug, "dbg", false, "debug")
+
+	pflag.StringVarP(&last_prefix_override, "last_prefix_override", "f", "none", "override the last prefix to use. default: \"none\"")
+
+	pflag.Int64VarP(&round_power, "round", "r", 0, "power of 10 to round to")
 
 
 	pflag.Parse()
+
+	if debug {
+		startTime = time.Now()
+	}
 
 	if hide_all_val {
 		show_all_values = false
@@ -427,6 +447,13 @@ func main() {
 			fmt.Println(fmt_epoch_to_prefixsec((*utime), prefix_to_use, last_prefix, mul))
 		}
 		
+	}
+
+	if debug {
+		endTime := time.Now()
+		elapsedTime := endTime.Sub(startTime)
+
+		fmt.Printf("Execution time: %s\n", elapsedTime)
 	}
 
 }
