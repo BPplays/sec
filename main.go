@@ -267,9 +267,9 @@ func main() {
 	var debug bool
 	var startTime time.Time
 
-	var last_prefix string = ""
+	var last_prefix string
 
-	var last_prefix_override string = ""
+	var last_prefix_override string
 
 
 
@@ -358,7 +358,7 @@ func main() {
 		utime = &utimeValue_parse
 	}
 
-
+	last_prefix = "none"
 
 	if millisec {
 		epochTime = currentTime.UnixMilli()
@@ -441,7 +441,7 @@ func main() {
 		if baresec{
 			fmt.Println((*utime))
 		} else {
-			if last_prefix_override != "" {
+			if last_prefix_override != "none" {
 				last_prefix = last_prefix_override
 			}
 			fmt.Println(fmt_epoch_to_prefixsec((*utime), prefix_to_use, last_prefix, mul))
