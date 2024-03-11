@@ -111,7 +111,7 @@ func fmt_epoch_to_prefixsec(utime int64, prefixesp *map[string]Prefix, break_pre
 		return prefixes[keys[i]].Base10 > prefixes[keys[j]].Base10
 	})
 
-	break_next := false
+	// break_next := false
 
 	var value Prefix
 	var next_value Prefix
@@ -131,12 +131,12 @@ func fmt_epoch_to_prefixsec(utime int64, prefixesp *map[string]Prefix, break_pre
 		}
 
 
-		if break_next {
-			break
-		}
-		if key == break_prefix {
-			break_next = true
-		}
+		// if break_next {
+		// 	break
+		// }
+		// if key == break_prefix {
+		// 	break_next = true
+		// }
 
 
 		if fl_time / value.Base10 >= 1 || (show_all_values && first_non0) || show_all_values_super {
@@ -153,6 +153,10 @@ func fmt_epoch_to_prefixsec(utime int64, prefixesp *map[string]Prefix, break_pre
 			fl_time = fl_time - (fl_round_time * value.Base10)
 			output.WriteString(" ")
 			first_non0 = true
+		}
+
+		if key == break_prefix {
+			break
 		}
 		
 	}
@@ -271,6 +275,8 @@ func main() {
 
 	var last_prefix_override string
 
+	var benchmark bool
+
 
 
 	// Set up the command line flags
@@ -303,6 +309,8 @@ func main() {
 	pflag.StringVarP(&last_prefix_override, "last_prefix_override", "f", "none", "override the last prefix to use. e.g. milli the last prefix you'll see is milli. note: none does not equal blank none means stop at no prefix")
 
 	pflag.Int64VarP(&round_power, "round", "r", 0, "rounds down, the number is the power of 10 to round to, e.g. 1 rounds to nearest 10, 2 rounds to nearest 100")
+
+	pflag.BoolVar(&benchmark, "ben", false, "benchmark")
 
 
 	pflag.Parse()
@@ -448,6 +456,14 @@ func main() {
 		}
 		
 	}
+
+	if benchmark {
+		for i := 0; i < 100000; i++ {
+			// Your loop body code goes here
+			fmt_epoch_to_prefixsec((*utime), prefix_to_use, last_prefix, mul)
+		}
+	}
+
 
 	if debug {
 		endTime := time.Now()
