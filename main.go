@@ -111,7 +111,7 @@ func fmt_epoch_to_prefixsec(utime int64, prefixesp *map[string]Prefix, break_pre
 		return prefixes[keys[i]].Base10 > prefixes[keys[j]].Base10
 	})
 
-	// break_next := false
+
 
 	var value Prefix
 	var next_value Prefix
@@ -131,12 +131,6 @@ func fmt_epoch_to_prefixsec(utime int64, prefixesp *map[string]Prefix, break_pre
 		}
 
 
-		// if break_next {
-		// 	break
-		// }
-		// if key == break_prefix {
-		// 	break_next = true
-		// }
 
 
 		if fl_time / value.Base10 >= 1 || (show_all_values && first_non0) || show_all_values_super {
@@ -154,6 +148,8 @@ func fmt_epoch_to_prefixsec(utime int64, prefixesp *map[string]Prefix, break_pre
 			output.WriteString(" ")
 			first_non0 = true
 		}
+
+
 
 		if key == break_prefix {
 			break
