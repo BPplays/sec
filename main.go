@@ -95,8 +95,8 @@ func fmt_epoch_to_prefixsec(utime int64, prefixesp *map[string]Prefix, break_pre
 	}
 
 	if round_power != 0 {
-		// fl_time = math.Floor(fl_time / math.Pow10(int(round_power))) * math.Pow10(int(round_power))
-		fl_time = fl_time - (math.Mod(fl_time, float64(math.Pow10(int(round_power)))))
+		fl_time = math.Floor(fl_time / math.Pow10(int(round_power))) * math.Pow10(int(round_power))
+		// fl_time = fl_time - (math.Mod(fl_time, float64(math.Pow10(int(round_power)))))
 	}
 	
 	var fl_round_time float64
