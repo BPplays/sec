@@ -479,7 +479,7 @@ func main() {
 	baresec := viper.GetBool("bare")
 
 	// Get the current time in UTC
-	// currentTime := time.Now().UTC()
+	currentTime := time.Now().UTC()
 
 	// Get the Unix epoch time in seconds
 
@@ -510,10 +510,19 @@ func main() {
 		// epochTime = currentTime.UnixNano()
 		last_prefix = "nano"
 		// *(mul) = math.Pow(10, -9)
-	} else {
-		// epochTime = currentTime.Unix()
-		// mul = nil
 	}
+
+	epochTime = currentTime.Unix()
+	ns := currentTime.UTC().Nanosecond()
+	fmt.Println(ns)
+	utime = big.NewInt(epochTime)
+	tmp := big.NewInt(0)
+	tmp2 := big.NewInt(0)
+	utime.Mul(utime, tmp.Exp(big.NewInt(10), big.NewInt(qsec_pow), nil))
+
+	tmp.Mul(big.NewInt(int64(ns)), tmp2.Exp(big.NewInt(10), big.NewInt(qsec_pow - AllPrefixes["nano"].Pow), nil))
+
+	utime.Add(utime, tmp)
 
 
 	if utime == nil {
@@ -549,10 +558,6 @@ func main() {
 			// epochTime = parsed_date.UnixNano()
 			last_prefix = "nano"
 			// *(mul) = math.Pow(10, -9)
-		} else {
-			// epochTime = parsed_date.Unix()
-			// parsed_date.UTC().Nanosecond()
-			// mul = nil
 		}
 		epochTime = parsed_date.Unix()
 		ns := parsed_date.UTC().Nanosecond()
