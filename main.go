@@ -132,17 +132,26 @@ func fmt_epoch_to_prefixsec(utime *big.Int, prefixesp *map[string]Prefix, break_
 	// } else {
 	// 	fl_time = float64(utime)
 	// }
+	str := []rune(utime.String())
+
 
 	if round_power != 0 {
 		// fl_time = math.Floor(fl_time / math.Pow10(int(round_power))) * math.Pow10(int(round_power))
 		// fl_time = fl_time - (math.Mod(fl_time, float64(math.Pow10(int(round_power)))))
 
-		for i := int(round_power); i > 0; i++ {
-			Digit(utime, 0, i)
+		// str := utime.String()
+
+		
+
+		for i := int(round_power+(qsec_pow*-1)); i > 0; i++ {
+			str[len(str)-1-i] = rune(0)
 		}
+		// utime.SetString(string(zbytes), 10)
 	}
 	
-	var fl_round_time float64
+	// var fl_round_time float64
+
+
 
 
 	keys := make([]string, 0, len(prefixes))
@@ -161,8 +170,10 @@ func fmt_epoch_to_prefixsec(utime *big.Int, prefixesp *map[string]Prefix, break_
 	var next_value Prefix
 	var powerDifference float64
 
-	var first_non0 bool = false
+	// var first_non0 bool = false
 	// Iterate over the sorted keys
+
+	// var last_power int64
 	for i, key := range keys {
 		value = prefixes[key]
 
@@ -174,24 +185,28 @@ func fmt_epoch_to_prefixsec(utime *big.Int, prefixesp *map[string]Prefix, break_
 			powerDifference = 3
 		}
 
+		output.WriteString(string(str[:int(math.Round(powerDifference))]))
+		output.WriteString(value.Symbol+"s")
+		str = str[:int(math.Round(powerDifference))]
 
 
 
-		if fl_time / value.Base10 >= 1 || (show_all_values && first_non0) || show_all_values_super {
-			fl_round_time = math.Floor(fl_time / value.Base10)
-			// fl_round_time = math.Floor(fl_round_time / math.Pow10(int(round_power))) * math.Pow10(int(round_power))
-			if leading_zero && ((!(leading_zero_start_from_sec && !first_non0))) {
-				formatString := fmt.Sprintf("%%0%d.0f%%v", int(math.Round(powerDifference)))
-				// fmt.Println(formatString)
-				output.WriteString(fmt.Sprintf(formatString,fl_round_time, value.Symbol+"s"))
-			} else {
-				output.WriteString(fmt.Sprintf("%v%v",fl_round_time, value.Symbol+"s"))
-			}
+
+		// if fl_time / value.Base10 >= 1 || (show_all_values && first_non0) || show_all_values_super {
+		// 	fl_round_time = math.Floor(fl_time / value.Base10)
+		// 	// fl_round_time = math.Floor(fl_round_time / math.Pow10(int(round_power))) * math.Pow10(int(round_power))
+		// 	if leading_zero && ((!(leading_zero_start_from_sec && !first_non0))) {
+		// 		formatString := fmt.Sprintf("%%0%d.0f%%v", int(math.Round(powerDifference)))
+		// 		// fmt.Println(formatString)
+		// 		output.WriteString(fmt.Sprintf(formatString,fl_round_time, value.Symbol+"s"))
+		// 	} else {
+		// 		output.WriteString(fmt.Sprintf("%v%v",fl_round_time, value.Symbol+"s"))
+		// 	}
 			
-			fl_time = fl_time - (fl_round_time * value.Base10)
-			output.WriteString(" ")
-			first_non0 = true
-		}
+		// 	fl_time = fl_time - (fl_round_time * value.Base10)
+		// 	output.WriteString(" ")
+		// 	first_non0 = true
+		// }
 
 
 
