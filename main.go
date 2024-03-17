@@ -400,7 +400,7 @@ func main() {
 	if viper.IsSet("prefix_second") {
 		utimeValue := viper.GetString("prefix_second")
 		utimeValue_parse := parse_prefix_sec(utimeValue)
-		utime = &utimeValue_parse
+		utime = utimeValue_parse
 	}
 
 	last_prefix = "none"
@@ -445,23 +445,33 @@ func main() {
 		
 		// fmt.Println(parsed_date)
 		// fmt.Println(parsed_date.Unix())
-		if millisec {
-			epochTime = parsed_date.UnixMilli()
-			last_prefix = "milli"
-			*(mul) = math.Pow(10, -3)
-		} else if microsec {
-			epochTime = parsed_date.UnixMicro()
-			last_prefix = "micro"
-			*(mul) = math.Pow(10, -6)
-		} else if nanosec {
-			epochTime = parsed_date.UnixNano()
-			last_prefix = "nano"
-			*(mul) = math.Pow(10, -9)
-		} else {
-			epochTime = parsed_date.Unix()
-			mul = nil
-		}
-		utime = &epochTime
+		// if millisec {
+		// 	epochTime = parsed_date.UnixMilli()
+		// 	last_prefix = "milli"
+		// 	*(mul) = math.Pow(10, -3)
+		// } else if microsec {
+		// 	epochTime = parsed_date.UnixMicro()
+		// 	last_prefix = "micro"
+		// 	*(mul) = math.Pow(10, -6)
+		// } else if nanosec {
+		// 	epochTime = parsed_date.UnixNano()
+		// 	last_prefix = "nano"
+		// 	*(mul) = math.Pow(10, -9)
+		// } else {
+		// 	epochTime = parsed_date.Unix()
+		// 	parsed_date.UTC().Nanosecond()
+		// 	mul = nil
+		// }
+		epochTime = parsed_date.Unix()
+		ns := parsed_date.UTC().Nanosecond()
+		utime = big.NewInt(epochTime)
+		tmp := big.NewInt(0)
+		tmp2 := big.NewInt(0)
+		utime.Mul(utime, tmp.Exp(big.NewInt(10), big.NewInt(qsec_pow), nil))
+
+		tmp.Mul(big.NewInt(int64(ns)), tmp2.Exp(big.NewInt(10), big.NewInt(qsec_pow - AllPrefixes["nano"].Pow), nil))
+
+		utime.Add(utime, tmp)
 	} 
 	if date_out {
 		var date_out time.Time
@@ -469,16 +479,16 @@ func main() {
 		var format string
 
 		if millisec {
-			date_out = time.UnixMilli((*utime))
+			date_out = time.UnixMilli(utime.Int64())
 			format = "2006-01-02 15:04:05.000"
 		} else if microsec {
 			log.Fatal("error cant use microsec and date output")
-			date_out = time.UnixMicro((*utime))
+			date_out = time.UnixMicro((utime.Int64()))
 		} else if nanosec {
 			log.Fatal("error cant use nanosec and date output")
 			// date_out = time.UnixNano(utime)
 		} else {
-			date_out = time.Unix((*utime), 0)
+			date_out = time.Unix((utime.Int64()), 0)
 			format = "2006-01-02 15:04:05"
 		}
 
