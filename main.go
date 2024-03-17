@@ -105,22 +105,41 @@ type times struct {
 // }
 
 
-func fmt_epoch_to_prefixsec(utime int64, prefixesp *map[string]Prefix, break_prefix string, mul *float64) string {
+func Digit(z *big.Int, digit int, pos int) {
+	// Convert the big integer to a string
+	zstr := z.String()
+
+	// Convert the string to a byte slice
+	zbytes := []rune(zstr)
+
+	// Modify the digit at the specified position
+	zbytes[len(zbytes)-1-pos] = rune(digit)
+
+	// Convert the modified byte slice back to a string
+	z.SetString(string(zbytes), 10)
+}
+
+
+func fmt_epoch_to_prefixsec(utime *big.Int, prefixesp *map[string]Prefix, break_prefix string, mul *float64) string {
 	var output strings.Builder
 
-	var fl_time float64
+	// var fl_time float64
 
 	prefixes := *(prefixesp)
 
-	if mul != nil {
-		fl_time = float64(utime) * *(mul)
-	} else {
-		fl_time = float64(utime)
-	}
+	// if mul != nil {
+	// 	fl_time = float64(utime) * *(mul)
+	// } else {
+	// 	fl_time = float64(utime)
+	// }
 
 	if round_power != 0 {
 		// fl_time = math.Floor(fl_time / math.Pow10(int(round_power))) * math.Pow10(int(round_power))
-		fl_time = fl_time - (math.Mod(fl_time, float64(math.Pow10(int(round_power)))))
+		// fl_time = fl_time - (math.Mod(fl_time, float64(math.Pow10(int(round_power)))))
+
+		for i := int(round_power); i > 0; i++ {
+			Digit(utime, 0, i)
+		}
 	}
 	
 	var fl_round_time float64
@@ -500,7 +519,7 @@ func main() {
 			if last_prefix_override != "none" {
 				last_prefix = last_prefix_override
 			}
-			fmt.Println(fmt_epoch_to_prefixsec((*utime), prefix_to_use, last_prefix, mul))
+			fmt.Println(fmt_epoch_to_prefixsec(utime, prefix_to_use, last_prefix, mul))
 		}
 		
 	}
@@ -508,7 +527,7 @@ func main() {
 	if benchmark {
 		for i := 0; i < 100000; i++ {
 			// Your loop body code goes here
-			fmt_epoch_to_prefixsec((*utime), prefix_to_use, last_prefix, mul)
+			fmt_epoch_to_prefixsec(utime, prefix_to_use, last_prefix, mul)
 		}
 	}
 
