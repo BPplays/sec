@@ -148,7 +148,7 @@ func fmt_epoch_to_prefixsec(utime *big.Int, prefixesp *map[string]Prefix, break_
 	// }
 	str := []rune(utime.String())
 
-	fmt.Println(utime)
+	// fmt.Println(utime)
 
 
 	if round_power != 0 {
@@ -159,16 +159,17 @@ func fmt_epoch_to_prefixsec(utime *big.Int, prefixesp *map[string]Prefix, break_
 
 		
 
-		for i := int(round_power+(qsec_pow*-1)); i > 0; i++ {
-			str[len(str)-1-i] = rune(0)
+		for i := int(round_power+(qsec_pow*-1)); i > 0; i-- {
+			str[len(str)-1-i] = '0'
 		}
+		fmt.Println(string(str))
 		// utime.SetString(string(zbytes), 10)
 	}
 	
 	// var fl_round_time float64
 
 
-	str = padRunes(str, max_pow+12) // why is +12 needed?
+	str = padRunes(str, max_pow+int(qsec_pow*-1)+3) // why is +12 needed?
 
 
 	keys := make([]string, 0, len(prefixes))
@@ -222,10 +223,11 @@ func fmt_epoch_to_prefixsec(utime *big.Int, prefixesp *map[string]Prefix, break_
 
 		tmpn, err = strconv.Atoi(tmp)
 		if err != nil {
+			// break
 			log.Fatal(err)
 		}
 
-		if tmpn != 0 {
+		if tmpn != 0 || (show_all_values && first_non0) || show_all_values_super {
 			// fmt.Println(tmpn)
 
 			if leading_zero && ((!(leading_zero_start_from_sec && !first_non0))) {
@@ -514,15 +516,23 @@ func main() {
 
 	epochTime = currentTime.Unix()
 	ns := currentTime.UTC().Nanosecond()
-	fmt.Println(ns)
+	// fmt.Println(ns)
 	utime = big.NewInt(epochTime)
 	tmp := big.NewInt(0)
 	tmp2 := big.NewInt(0)
-	utime.Mul(utime, tmp.Exp(big.NewInt(10), big.NewInt(qsec_pow), nil))
+	qsbi := big.NewInt(qsec_pow*-1)
+	// 10bi := big.NewInt(10)
+	tbi := big.NewInt(10)
+	tmp.Exp(tbi, qsbi, nil)
+	fmt.Println(tmp)
+	utime.Mul(utime, tmp)
 
-	tmp.Mul(big.NewInt(int64(ns)), tmp2.Exp(big.NewInt(10), big.NewInt(qsec_pow - AllPrefixes["nano"].Pow), nil))
+	
+
+	tmp.Mul(big.NewInt(int64(ns)), tmp2.Exp(big.NewInt(10), big.NewInt((qsec_pow*-1) + (AllPrefixes["nano"].Pow)), nil))
 
 	utime.Add(utime, tmp)
+	fmt.Println(utime, ns, tmp)
 
 
 	if utime == nil {
