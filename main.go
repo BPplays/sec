@@ -343,8 +343,10 @@ func main() {
 
 
 
+
+
 	// Set up the command line flags
-	pflag.StringVarP("int_second", "i", 0, "integer second input, e.g. 1709999172")
+	pflag.StringP("int_second", "i", "0", "integer second input, e.g. 1709999172")
 	pflag.StringVarP(&prefix_second, "prefix_second", "p", "", "input seconds with prefixes, e.g. 1Gs 709Ms 999ks 57s")
 
 
