@@ -188,16 +188,23 @@ func fmt_epoch_to_prefixsec(utime *big.Int, prefixesp *map[string]Prefix, break_
 	var next_value Prefix
 	var powerDifference int64
 
+	var rem_amount int64
+
 	var first_non0 bool = false
 	// Iterate over the sorted keys
 
 	// var last_power int64
 	// stln := int64(len(str))
 	var tmp string
-	var tmpn int
+	// var tmpn int
+	var t int
+	var sl_tmpn []int
 	var err error
+	var val_hasval bool
 	for i, key := range keys {
+		sl_tmpn = []int{}
 		value = prefixes[key]
+		val_hasval = false
 
 		if i+1 < len(prefixes) {
 			next_value = prefixes[keys[i+1]]
@@ -212,6 +219,10 @@ func fmt_epoch_to_prefixsec(utime *big.Int, prefixesp *map[string]Prefix, break_
 			break
 		}
 
+		// if len(str) > max_pow+int(powerDifference) {
+		// 	powerDifference = int64(len(str) - max_pow)
+		// }
+
 
 		// fmt.Println(value.Pow, len(str), powerDifference, string(str))
 		// fmt.Println((value.Pow + qsec_pow), stln)
@@ -219,30 +230,61 @@ func fmt_epoch_to_prefixsec(utime *big.Int, prefixesp *map[string]Prefix, break_
 		// if (value.Pow) <= stln {
 		// 	continue
 		// }
-		tmp = string(str[:int(powerDifference)])
 
-		tmpn, err = strconv.Atoi(tmp)
-		if err != nil {
-			// break
-			log.Fatal(err)
-		}
+		rem_amount = powerDifference
 
-		if tmpn != 0 || (show_all_values && first_non0) || show_all_values_super {
-			// fmt.Println(tmpn)
 
-			if leading_zero && ((!(leading_zero_start_from_sec && !first_non0))) {
-				// formatString := fmt.Sprintf("%%0%d.0f%%v", int(powerDifference))
-				// fmt.Println(formatString)
-				output.WriteString(fmt.Sprintf("%0*d%v", powerDifference ,tmpn, value.Symbol+"s "))
-			} else {
-				output.WriteString(fmt.Sprintf("%v%v",tmpn, value.Symbol+"s "))
+		
+
+
+
+		// fmt.Println((len(str) - 31))
+
+		// if (len(str) - 33) > max_pow {
+		// 	rem_amount = int64(len(str) - max_pow)
+		// }
+
+		for ; (len(str) - 31) > int(value.Pow) ; {
+			tmp = string(str[:int(rem_amount)])
+
+			t, err = strconv.Atoi(tmp)
+			if err != nil {
+				// break
+				log.Fatal(err)
 			}
-			// output.WriteString(tmp)
-			// output.WriteString(value.Symbol+"s ")
-			
-			first_non0 = true
+	
+			sl_tmpn = append(sl_tmpn, t)
+			str = str[int(rem_amount):]
 		}
-		str = str[int(powerDifference):]
+
+
+
+		for _, tmpn := range sl_tmpn {
+			if tmpn != 0 || (show_all_values && first_non0) || show_all_values_super {
+
+				// fmt.Println(tmpn)
+	
+				if leading_zero && ((!(leading_zero_start_from_sec && !first_non0))) {
+					// formatString := fmt.Sprintf("%%0%d.0f%%v", int(powerDifference))
+					// fmt.Println(formatString)
+					output.WriteString(fmt.Sprintf("%0*d", powerDifference ,tmpn))
+				} else {
+					output.WriteString(fmt.Sprintf("%v",tmpn))
+				}
+				val_hasval = true
+				// output.WriteString(tmp)
+				// output.WriteString(value.Symbol+"s ")
+				
+				first_non0 = true
+			}
+			
+		}
+
+		if val_hasval {
+			output.WriteString(value.Symbol+"s ")
+		}
+		
+
 
 
 
@@ -368,7 +410,7 @@ var leading_zero_start_from_sec bool
 
 var round_power int64
 
-
+var power_input string
 
 func main() {
 
@@ -434,6 +476,7 @@ func main() {
 
 	pflag.Int64VarP(&round_power, "round", "r", 0, "rounds down, the number is the power of 10 to round to, e.g. 1 rounds to nearest 10, 2 rounds to nearest 100")
 
+	pflag.StringVarP(&power_input, "power_input", "w", "none", "quetta\nquetta2")
 	pflag.BoolVar(&benchmark, "ben", false, "benchmark")
 
 
@@ -468,10 +511,12 @@ func main() {
 			fmt.Println("Invalid number format")
 			return
 		}
-		utime = num
+		tmp := big.NewInt(10)
+		utime = num.Mul(num, tmp.Exp(tmp, big.NewInt((qsec_pow * -1) + AllPrefixes[power_input].Pow), nil))
 	} else {
 		utime = nil
 	}
+	
 
 
 	millisec := viper.GetBool("milli")
@@ -497,42 +542,64 @@ func main() {
 		utime = utimeValue_parse
 	}
 
-	last_prefix = "none"
+	last_prefix = power_input
+
+	// last_prefix = "none"
+
+	// if millisec {
+	// 	// epochTime = currentTime.UnixMilli()
+	// 	last_prefix = "milli"
+	// 	// *(mul) = math.Pow(10, -3)
+	// 	// time.Unix()
+	// } else if microsec {
+	// 	// epochTime = currentTime.UnixMicro()
+	// 	last_prefix = "micro"
+	// 	// *(mul) = math.Pow(10, -6)
+	// } else if nanosec {
+	// 	// epochTime = currentTime.UnixNano()
+	// 	last_prefix = "nano"
+	// 	// *(mul) = math.Pow(10, -9)
+	// }
 
 	if millisec {
-		// epochTime = currentTime.UnixMilli()
+		// epochTime = parsed_date.UnixMilli()
+		log.Fatal("-m depricated")
 		last_prefix = "milli"
 		// *(mul) = math.Pow(10, -3)
-		// time.Unix()
 	} else if microsec {
-		// epochTime = currentTime.UnixMicro()
+		// epochTime = parsed_date.UnixMicro()
 		last_prefix = "micro"
+		log.Fatal("-6 depricated")
 		// *(mul) = math.Pow(10, -6)
 	} else if nanosec {
-		// epochTime = currentTime.UnixNano()
+		// epochTime = parsed_date.UnixNano()
+		log.Fatal("-n depricated")
 		last_prefix = "nano"
 		// *(mul) = math.Pow(10, -9)
 	}
 
-	epochTime = currentTime.Unix()
-	ns := currentTime.UTC().Nanosecond()
-	// fmt.Println(ns)
-	utime = big.NewInt(epochTime)
-	tmp := big.NewInt(0)
-	tmp2 := big.NewInt(0)
-	qsbi := big.NewInt(qsec_pow*-1)
-	// 10bi := big.NewInt(10)
-	tbi := big.NewInt(10)
-	tmp.Exp(tbi, qsbi, nil)
-	fmt.Println(tmp)
-	utime.Mul(utime, tmp)
-
+	if utime == nil {
+		epochTime = currentTime.Unix()
+		ns := currentTime.UTC().Nanosecond()
+		// fmt.Println(ns)
+		utime = big.NewInt(epochTime)
+		tmp := big.NewInt(0)
+		tmp2 := big.NewInt(0)
+		qsbi := big.NewInt(qsec_pow*-1)
+		// 10bi := big.NewInt(10)
+		tbi := big.NewInt(10)
+		tmp.Exp(tbi, qsbi, nil)
+		// fmt.Println(tmp)
+		utime.Mul(utime, tmp)
 	
+		
+	
+		tmp.Mul(big.NewInt(int64(ns)), tmp2.Exp(big.NewInt(10), big.NewInt((qsec_pow*-1) + (AllPrefixes["nano"].Pow)), nil))
+	
+		utime.Add(utime, tmp)
+	}
 
-	tmp.Mul(big.NewInt(int64(ns)), tmp2.Exp(big.NewInt(10), big.NewInt((qsec_pow*-1) + (AllPrefixes["nano"].Pow)), nil))
-
-	utime.Add(utime, tmp)
-	fmt.Println(utime, ns, tmp)
+	// fmt.Println(utime, ns, tmp)
 
 
 	if utime == nil {
@@ -558,14 +625,17 @@ func main() {
 		// fmt.Println(parsed_date.Unix())
 		if millisec {
 			// epochTime = parsed_date.UnixMilli()
+			log.Fatal("-m depricated")
 			last_prefix = "milli"
 			// *(mul) = math.Pow(10, -3)
 		} else if microsec {
 			// epochTime = parsed_date.UnixMicro()
 			last_prefix = "micro"
+			log.Fatal("-6 depricated")
 			// *(mul) = math.Pow(10, -6)
 		} else if nanosec {
 			// epochTime = parsed_date.UnixNano()
+			log.Fatal("-n depricated")
 			last_prefix = "nano"
 			// *(mul) = math.Pow(10, -9)
 		}
@@ -587,12 +657,15 @@ func main() {
 		var format string
 
 		if millisec {
+			log.Fatal("-m depricated")
 			date_out = time.UnixMilli(utime.Int64())
 			format = "2006-01-02 15:04:05.000"
 		} else if microsec {
+			log.Fatal("-6 depricated")
 			log.Fatal("error cant use microsec and date output")
 			date_out = time.UnixMicro((utime.Int64()))
 		} else if nanosec {
+			log.Fatal("-n depricated")
 			log.Fatal("error cant use nanosec and date output")
 			// date_out = time.UnixNano(utime)
 		} else {
