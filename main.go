@@ -6,7 +6,6 @@ import (
 	"math"
 	"math/big"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 	"unicode"
@@ -198,7 +197,7 @@ func removeSingleTrailingSpace(input string) string {
 }
 
 
-func findAndParseNumber(input string) (int64, error) {
+func findAndParseNumber(input string) (*big.Int, error) {
 	var sb strings.Builder
 	// fmt.Println(input)
 	// runel := []rune(input)
@@ -211,12 +210,21 @@ func findAndParseNumber(input string) (int64, error) {
 		}
 	}
 
-	return strconv.ParseInt(sb.String(), 10, 64)
+	num := new(big.Int)
+	_, success := num.SetString(sb.String(), 10)
+	if !success {
+		fmt.Println("Invalid number format")
+		log.Fatal("nono num parse prefix")
+	}
+
+	return num, nil
 }
 
 
-func parse_prefix_sec(input string) int64 {
-	var total int64 = 0
+func parse_prefix_sec(input string) *big.Int {
+	// var total int64 = 0
+
+	total := big.NewInt(0)
 
 	split := strings.SplitAfter(strings.ReplaceAll(input, " ", ""), "s")
 
@@ -238,7 +246,7 @@ func parse_prefix_sec(input string) int64 {
 		rune_list = []rune(i)
 		prefix := rune_list[len(rune_list)-2]
 		if prefix == ' ' || unicode.IsDigit(prefix) {
-			total += num
+			total.Add(total, num)
 			continue
 		}
 
@@ -247,7 +255,7 @@ func parse_prefix_sec(input string) int64 {
 			if value.Symbol == string(prefix) {
 				// Symbol found, do something
 				// fmt.Printf("Symbol %s found for prefix %s\n", prefix, key)
-				total += num * int64(value.Base10)
+				total.Add(total, num.Exp(num, big.NewInt(value.Pow), nil))
 			}
 		}
 	}
@@ -274,7 +282,7 @@ func main() {
 
 	var epochTime int64
 
-	var utime *int64
+	var utime *big.Int
 	var millisecflag bool
 	var microsecflag bool
 	var nanosecflag bool
@@ -302,7 +310,7 @@ func main() {
 
 
 	// Set up the command line flags
-	pflag.Int64P("int_second", "i", 0, "integer second input, e.g. 1709999172")
+	pflag.StringVarP("int_second", "i", 0, "integer second input, e.g. 1709999172")
 	pflag.StringVarP(&prefix_second, "prefix_second", "p", "", "input seconds with prefixes, e.g. 1Gs 709Ms 999ks 57s")
 
 
@@ -358,8 +366,15 @@ func main() {
 
 	// Get the utime value from the configuration
 	if viper.IsSet("int_second") {
-		utimeValue := viper.GetInt64("int_second")
-		utime = &utimeValue
+		utimeValue := viper.GetString("int_second")
+		// Parse input number string into a big.Int
+		num := new(big.Int)
+		_, success := num.SetString(utimeValue, 10)
+		if !success {
+			fmt.Println("Invalid number format")
+			return
+		}
+		utime = num
 	} else {
 		utime = nil
 	}
@@ -411,7 +426,8 @@ func main() {
 
 	if utime == nil {
 		// fmt.Println("utime is not assigned. Using default value.")
-		utime = &epochTime
+		bi := big.NewInt(epochTime)
+		utime = bi
 	}
 
 	// time.
