@@ -669,8 +669,20 @@ func main() {
 			log.Fatal("error cant use nanosec and date output")
 			// date_out = time.UnixNano(utime)
 		} else {
-			date_out = time.Unix((utime.Int64()), 0)
-			format = "2006-01-02 15:04:05"
+
+
+			tmp := big.NewInt(0)
+			tmp2 := big.NewInt(0)
+			// utime.Mul(utime, tmp.Exp(big.NewInt(10), big.NewInt(qsec_pow), nil))
+			fmt.Println(tmp)
+	
+			tmp.Div((utime), tmp2.Exp(big.NewInt(10), big.NewInt(qsec_pow * -1), nil))
+
+			fmt.Println(tmp, utime)
+	
+			
+			date_out = time.Unix((tmp.Int64()), 0)
+			format = "2006/01/02 15:04:05"
 		}
 
 		fmt.Printf("local: %v\nUTC: %v\n",date_out.Format(format) ,date_out.UTC().Format(format))
