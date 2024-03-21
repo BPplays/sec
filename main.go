@@ -162,7 +162,7 @@ func fmt_epoch_to_prefixsec(utime *big.Int, prefixesp *map[string]Prefix, break_
 		for i := int(round_power+(qsec_pow*-1)); i > 0; i-- {
 			str[len(str)-1-i] = '0'
 		}
-		fmt.Println(string(str))
+		// fmt.Println(string(str))
 		// utime.SetString(string(zbytes), 10)
 	}
 	
