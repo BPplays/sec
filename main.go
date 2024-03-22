@@ -120,7 +120,7 @@ func Digit(z *big.Int, digit int, pos int) {
 	z.SetString(string(zbytes), 10)
 }
 
-
+var round_on bool
 
 func padRunes(input []rune, length int) []rune {
     if length <= len(input) {
@@ -151,7 +151,7 @@ func fmt_epoch_to_prefixsec(utime *big.Int, prefixesp *map[string]Prefix, break_
 	// fmt.Println(utime)
 
 
-	if round_power != 0 {
+	if round_on {
 		// fl_time = math.Floor(fl_time / math.Pow10(int(round_power))) * math.Pow10(int(round_power))
 		// fl_time = fl_time - (math.Mod(fl_time, float64(math.Pow10(int(round_power)))))
 
@@ -442,6 +442,9 @@ func main() {
 	var benchmark bool
 
 
+	round_on = true
+
+
 
 
 
@@ -474,7 +477,7 @@ func main() {
 
 	pflag.StringVarP(&last_prefix_override, "last_prefix_override", "f", "none", "override the last prefix to use. e.g. milli the last prefix you'll see is milli. note: none does not equal blank none means stop at no prefix")
 
-	pflag.Int64VarP(&round_power, "round", "r", 0, "rounds down, the number is the power of 10 to round to, e.g. 1 rounds to nearest 10, 2 rounds to nearest 100")
+	pflag.Int64VarP(&round_power, "round", "r", -1, "rounds down, the number is the power of 10 to round to, e.g. 1 rounds to nearest 10, 2 rounds to nearest 100. -1 is off, -2 is nearest 100 ms")
 
 	pflag.StringVarP(&power_input, "power_input", "w", "none", "quetta\nquetta2")
 	pflag.BoolVar(&benchmark, "ben", false, "benchmark")
@@ -485,6 +488,18 @@ func main() {
 	if debug {
 		startTime = time.Now()
 	}
+
+
+
+
+	if round_power == -1 {
+		round_on = false
+	} else if round_power < 0 {
+		round_power += 1
+	}
+
+
+
 
 	if hide_all_val {
 		show_all_values = false
