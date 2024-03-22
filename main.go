@@ -244,7 +244,7 @@ func fmt_epoch_to_prefixsec(utime *big.Int, prefixesp *map[string]Prefix, break_
 		// 	rem_amount = int64(len(str) - max_pow)
 		// }
 
-		for ; (len(str) - 31) > int(value.Pow) ; {
+		for ; (len(str) - max_pow) > int(value.Pow) ; {
 			tmp = string(str[:int(rem_amount)])
 
 			t, err = strconv.Atoi(tmp)
