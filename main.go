@@ -689,11 +689,11 @@ func main() {
 			tmp := big.NewInt(0)
 			tmp2 := big.NewInt(0)
 			// utime.Mul(utime, tmp.Exp(big.NewInt(10), big.NewInt(qsec_pow), nil))
-			fmt.Println(tmp)
+			// fmt.Println(tmp)
 	
 			tmp.Div((utime), tmp2.Exp(big.NewInt(10), big.NewInt(qsec_pow * -1), nil))
 
-			fmt.Println(tmp, utime)
+			// fmt.Println(tmp, utime)
 	
 			
 			date_out = time.Unix((tmp.Int64()), 0)
@@ -703,7 +703,13 @@ func main() {
 		fmt.Printf("local: %v\nUTC: %v\n",date_out.Format(format) ,date_out.UTC().Format(format))
 	} else {
 		if baresec{
-			fmt.Println((*utime))
+			tmp := big.NewInt(0)
+			tmp2 := big.NewInt(0)
+			// utime.Mul(utime, tmp.Exp(big.NewInt(10), big.NewInt(qsec_pow), nil))
+			// fmt.Println(tmp)
+	
+			tmp.Div((utime), tmp2.Exp(big.NewInt(10), big.NewInt(qsec_pow * -1), nil))
+			fmt.Println(tmp)
 		} else {
 			if last_prefix_override != "none" {
 				last_prefix = last_prefix_override
