@@ -667,6 +667,9 @@ func main() {
 		utime.Add(utime, tmp)
 	} 
 	if date_out {
+		if round_on {
+			log.Fatalln("can't use round with -o")
+		}
 		var date_out time.Time
 
 		var format string
@@ -703,6 +706,9 @@ func main() {
 		fmt.Printf("local: %v\nUTC: %v\n",date_out.Format(format) ,date_out.UTC().Format(format))
 	} else {
 		if baresec{
+			if round_on {
+				log.Fatalln("can't use round with -b")
+			}
 			tmp := big.NewInt(0)
 			tmp2 := big.NewInt(0)
 			// utime.Mul(utime, tmp.Exp(big.NewInt(10), big.NewInt(qsec_pow), nil))
