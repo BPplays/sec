@@ -708,7 +708,7 @@ func main() {
 			// utime.Mul(utime, tmp.Exp(big.NewInt(10), big.NewInt(qsec_pow), nil))
 			// fmt.Println(tmp)
 	
-			tmp.Div((utime), tmp2.Exp(big.NewInt(10), big.NewInt(qsec_pow * -1), nil))
+			tmp.Div((utime), tmp2.Exp(big.NewInt(10), big.NewInt((qsec_pow * -1) + AllPrefixes[power_input].Pow), nil))
 			fmt.Println(tmp)
 		} else {
 			if last_prefix_override != "none" {
